@@ -1,0 +1,4 @@
+interface:
+  display_name: "Desain dan Adaptasi Kemasan"
+  short_description: "Siapkan dan adaptasikan kemasan berbagai bentuk serta ukuran"
+  default_prompt: "Gunakan $kemasan-desain untuk menyiapkan atau menyesuaikan kemasan ini menurut jenis, ukuran, rangka dan gaya yang diminta, memisahkan teks/gambar, serta menyusunnya di Affinity bila diperlukan."
