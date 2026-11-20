@@ -1,42 +1,79 @@
 # Skill Desain Kemasan
 
-Skill berbahasa Indonesia untuk menyiapkan bahan, membuat, mengadaptasikan, dan merevisi desain kemasan dari gambar referensi, brief, atau rangka. Mendukung inner/dus, label, pouch, sachet, sleeve, serta penyusunan di Affinity bila tool tersedia.
+Dari gambar referensi menjadi **bahan desain terpisah**, lalu **master kemasan yang bisa dikerjakan di Affinity**. Skill berbahasa Indonesia ini membantu analisis komponen, transkripsi teks, adaptasi ukuran, penyusunan, revisi, dan pemeriksaan hasil.
 
-## Isi
+![Alur kerja dari sumber sampai folder hasil](docs/images/01-alur-kerja.png)
 
-- `SKILL.md`: instruksi utama dan alur kerja.
-- `references/`: adaptasi ukuran, pemisahan komponen, logo perusahaan, Affinity, dan penyerahan hasil.
-- `scripts/`: perhitungan geometri, inspeksi gambar, dan ZIP jika diminta.
-- `tests/`: pemeriksaan helper geometri.
-- `agents/openai.yaml`: metadata skill.
+> Skill adalah panduan kerja untuk agent AI. Memasang folder ini tidak otomatis memasang Affinity, konektor MCP, atau tool pembuat gambar.
 
-## Memasang dan menggunakan
+## Mulai dari sini
 
-Salin seluruh isi repositori ke folder `kemasan-desain` dalam direktori skill agent Anda. Untuk Codex, lokasi umumnya `~/.codex/skills/kemasan-desain/`. Muat ulang daftar skill bila diperlukan, lalu panggil `$kemasan-desain` bersama referensi, ukuran, atau file rangka.
+| Saya ingin… | Baca |
+| --- | --- |
+| Tahu apa saja yang harus disiapkan | [Persiapan bahan dan perangkat](docs/01-persiapan.md) |
+| Memasang skill dan mengecek koneksi | [Instalasi dan koneksi](docs/02-instalasi-dan-koneksi.md) |
+| Memahami urutan pengerjaan | [Alur kerja langkah demi langkah](docs/03-alur-pengerjaan.md) |
+| Menyalin contoh prompt dan meminta revisi | [Contoh penggunaan](docs/04-contoh-dan-revisi.md) |
+| Mengatasi masalah umum | [Pemecahan masalah](docs/05-troubleshooting.md) |
+| Mengisi data proyek sebelum mulai | [Template brief](examples/brief-produk.md) |
 
-Contoh permintaan:
+## Yang perlu tersedia
+
+- **Agent AI** yang dapat memuat skill, membaca gambar, dan mengakses file proyek.
+- **Gambar referensi atau brief**, nama produk, varian isi, dan teks yang benar.
+- **Rangka/ukuran terukur** bila meminta layout berdimensi atau desain di Affinity.
+- **Affinity dan koneksi MCP yang berfungsi** bila meminta agent menyusun file native.
+- **Tool gambar** bila aset perlu dibuat atau direkonstruksi dengan AI. Aset yang sudah baik bisa dipakai kembali.
+- **Python 3** hanya untuk helper geometri/inspeksi; Pillow opsional untuk inspeksi gambar.
+
+Lihat [tabel kebutuhan per jenis pekerjaan](docs/01-persiapan.md#perangkat-dan-tool) agar tidak memasang sesuatu yang belum diperlukan.
+
+## Instalasi singkat
+
+Salin seluruh repositori sebagai satu folder bernama `kemasan-desain`, bukan hanya `SKILL.md`. Untuk Codex saat ini, lokasi pengguna yang didokumentasikan adalah `~/.agents/skills/`; lihat [panduan resmi skills](https://learn.chatgpt.com/docs/build-skills). Instruksi Windows dan cara memverifikasi pemasangan ada di [panduan instalasi](docs/02-instalasi-dan-koneksi.md).
 
 ```text
-Gunakan $kemasan-desain untuk menganalisis gambar produk ini,
-menyiapkan bahan terpisah, lalu merakitnya di Affinity memakai rangka yang saya berikan.
+kemasan-desain/
+├── SKILL.md
+├── agents/
+├── references/
+├── scripts/
+├── tests/
+├── docs/
+└── examples/
 ```
 
-## Perilaku utama
+## Permintaan pertama
 
-- Analisis dan pisahkan gambar, teks, serta bentuk sebelum menyusun desain.
-- Tanyakan komponen yang ambigu, nomor TR, konflik produsen CV/PT, serta format kolom produksi/kedaluwarsa bila belum ditentukan.
-- Cocokkan logo sertifikasi dengan pemilik dan sumber yang sesuai; tidak ada perusahaan bawaan.
-- Periksa ukuran fisik tiap bidang, geometri rangka, proporsi gambar/kode dan overflow teks.
-- Konfirmasi komposisi dan TR varian baru; simpan setiap varian terpisah.
-- Gunakan nama `INNER`, `LABEL`, atau `INNER DAN LABEL` sesuai isi file, diikuti nama produk dan ukuran isi.
-- Serahkan folder desain; ZIP dibuat hanya jika diminta.
-- Periksa hasil tersimpan, PDF dan preview setelah perubahan terakhir.
+```text
+Gunakan $kemasan-desain untuk produk [NAMA PRODUK] ukuran [ISI].
+Referensi: [unggah gambar atau berikan path yang dapat diakses].
+Rangka: [file rangka dan ukuran yang digunakan].
 
-Skill tidak menyertakan aset merek, sertifikat, atau QR produk. Tool Affinity dan imagegen perlu tersedia pada agent untuk menjalankan bagian terkait; helper Python tidak memasang integrasi tersebut.
+Analisis gambar terlebih dahulu. Pisahkan teks, gambar, dan bentuk.
+Siapkan serta periksa semua bahan sebelum merakit di Affinity.
+Tanyakan bagian yang ambigu, nomor TR, produsen CV/PT, dan format
+kolom produksi/kedaluwarsa bila belum saya tentukan.
+Simpan hasil di [FOLDER TUJUAN], tanpa ZIP otomatis.
+```
 
-## Helper Python
+Gunakan istilah/nomor yang relevan dengan produk Anda. Produk yang tidak memerlukan TR atau kolom kedaluwarsa tidak perlu ditambah kolom tersebut hanya karena contoh prompt menyebutnya.
 
-Python 3 diperlukan untuk helper. Pillow opsional untuk inspeksi gambar.
+## Cara komponen dipisahkan
+
+![Contoh gambar, teks editable dan bentuk native](docs/images/02-pemisahan-komponen.png)
+
+Informasi produk menjadi teks editable. Foto, ilustrasi, dan logotype khusus dapat menjadi gambar terpisah. Background, bar, kotak, garis, dan rangka cocok menjadi bentuk native. Jika batas komponen tidak jelas, agent perlu bertanya sebelum generate.
+
+## Hasil yang diterima
+
+![Contoh folder dan penamaan hasil](docs/images/04-folder-hasil.png)
+
+Nama file mengikuti isinya: `INNER`, `LABEL`, atau `INNER DAN LABEL`, kemudian nama produk dan ukuran isi. Varian disimpan terpisah. Folder berisi master, bahan, PDF/preview sesuai permintaan, dan penunjuk versi terbaru. **ZIP hanya dibuat jika diminta.**
+
+Gambar dokumentasi adalah skema buatan untuk menjelaskan alur, bukan screenshot aplikasi atau aset produk siap cetak. Sumber SVG tersedia bersama PNG di [docs/images](docs/images).
+
+## Helper dan pemeriksaan kode
 
 ```bash
 python scripts/layout_geometry.py cylinder --diameter 57 --height 51 --overlap 3
@@ -44,4 +81,6 @@ python scripts/package_assets.py inspect path/to/image.png
 python -m unittest discover -s tests
 ```
 
-Perhitungan keliling memakai bentuk silinder ideal; ukuran produksi tetap mengikuti rangka dan spesifikasi proyek.
+Perhitungan tidak membuktikan bentuk botol nyata atau kesiapan produksi. Petunjuk cetak/bleed mengikuti data proyek dan percetakan. [Pelajari batas helper](docs/02-instalasi-dan-koneksi.md#helper-python-opsional).
+
+Instruksi untuk agent ada di [SKILL.md](SKILL.md). Dokumentasi pengguna ini tidak menggantikan keputusan proyek atau ketersediaan tool pada agent.
